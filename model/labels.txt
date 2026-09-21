@@ -1,1 +1,5 @@
-
+0 Hose
+1 T-Shirt
+2 helm
+3 Flasche
+4 Sonstige
