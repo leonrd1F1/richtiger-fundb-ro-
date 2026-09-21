@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import hashlib
 import sqlite3
 import uuid
@@ -17,14 +18,17 @@ from PIL import Image, UnidentifiedImageError
 # ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = BASE_DIR / "assets"
 MODEL_DIR = BASE_DIR / "model"
 DATA_DIR = BASE_DIR / "data"
 UPLOAD_DIR = BASE_DIR / "uploads"
 
+LOGO_PATH = ASSETS_DIR / "logo.png"
 MODEL_PATH = MODEL_DIR / "keras_model.h5"
 LABELS_PATH = MODEL_DIR / "labels.txt"
 DATABASE_PATH = DATA_DIR / "fundbuero.db"
 
+ASSETS_DIR.mkdir(exist_ok=True)
 MODEL_DIR.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
 UPLOAD_DIR.mkdir(exist_ok=True)
@@ -91,89 +95,150 @@ def apply_design() -> None:
     st.markdown(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700&display=swap');
 
         html, body, [class*="css"] {
             font-family: 'Inter', Arial, sans-serif;
         }
 
         .stApp {
-            background:
-                linear-gradient(
-                    90deg,
-                    rgba(245, 248, 252, 0.96),
-                    rgba(255, 255, 255, 0.98)
-                );
+            background: #f4f7fb;
         }
 
+        /* ---------- SEITENLEISTE ---------- */
+
         [data-testid="stSidebar"] {
-            background: #102c50;
-            border-right: 5px solid #f4d06f;
+            background: #0e3a75;
+            border-right: 5px solid #f2b705;
         }
 
         [data-testid="stSidebar"] * {
-            color: white !important;
+            color: #ffffff !important;
         }
 
         [data-testid="stSidebar"] .stRadio label {
             font-size: 1.05rem;
             font-weight: 600;
+            padding: 0.2rem 0;
         }
 
-        .top-brand {
-            text-align: center;
-            padding: 0.4rem 0 1.1rem 0;
+        /* ---------- KOPFBEREICH MIT WAPPEN ---------- */
+
+        .main-header {
+            background: #0e3a75;
+            border-bottom: 6px solid #f2b705;
+            border-radius: 16px;
+            padding: 1.2rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1.3rem;
+            margin-bottom: 1.6rem;
+            box-shadow: 0 6px 18px rgba(14, 58, 117, 0.25);
         }
 
-        .top-brand-title {
-            font-size: 1.8rem;
+        .header-logo {
+            width: 84px;
+            height: 84px;
+            object-fit: contain;
+            background: #ffffff;
+            border: 3px solid #f2b705;
+            border-radius: 14px;
+            padding: 4px;
+            flex-shrink: 0;
+        }
+
+        .header-logo-fallback {
+            width: 84px;
+            height: 84px;
+            background: #ffffff;
+            color: #0e3a75;
+            border: 3px solid #f2b705;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.6rem;
             font-weight: 800;
-            letter-spacing: 0.08rem;
-            color: #102c50;
-            margin: 0;
+            flex-shrink: 0;
         }
 
-        .top-brand-subtitle {
-            font-size: 0.85rem;
-            color: #3c5874;
-            letter-spacing: 0.05rem;
-            margin-top: 0.2rem;
+        .header-title {
+            color: #ffffff;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            line-height: 1.05;
         }
+
+        .header-subtitle {
+            color: #f2b705;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 0.35rem;
+            letter-spacing: 0.03em;
+        }
+
+        /* ---------- ÜBERSCHRIFTEN ---------- */
 
         .page-title {
             text-align: center;
-            color: #111111;
-            font-size: 3rem;
+            color: #0e3a75;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
             line-height: 1.1;
-            font-weight: 700;
-            margin: 1rem 0 2rem 0;
+            margin: 1rem 0 1.4rem 0;
         }
 
+        .blue-heading {
+            color: #0e3a75;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin: 1.2rem 0 0.8rem 0;
+        }
+
+        .section-label {
+            color: #0e3a75;
+            font-size: 1.25rem;
+            font-weight: 800;
+            font-family: 'Montserrat', Arial, sans-serif;
+            margin-top: 1.4rem;
+            margin-bottom: 0.55rem;
+        }
+
+        /* ---------- STARTSEITE ---------- */
+
         .hero-box {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid #dbe3ec;
-            border-radius: 26px;
-            padding: 2rem;
-            box-shadow: 0 12px 35px rgba(16, 44, 80, 0.1);
+            background: #ffffff;
+            border: 1px solid #d7e0ec;
+            border-top: 6px solid #0e3a75;
+            border-radius: 16px;
+            padding: 1.6rem 2rem;
+            box-shadow: 0 6px 16px rgba(14, 58, 117, 0.08);
             margin-bottom: 2rem;
         }
 
         .hero-box h2 {
-            color: #102c50;
-            font-size: 2rem;
+            color: #0e3a75;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-size: 1.9rem;
             margin-bottom: 0.5rem;
         }
 
         .hero-box p {
-            color: #50657b;
+            color: #3f5065;
             font-size: 1.05rem;
             margin: 0;
         }
 
+        /* Rote Aktionskästen: weiße Schrift auf kräftigem Rot */
         .red-action {
-            background: #ff3038;
-            color: #000000;
-            border-radius: 30px;
+            background: #c8102e;
+            color: #ffffff;
+            border-radius: 16px;
             padding: 1.5rem 1rem;
             min-height: 145px;
             display: flex;
@@ -181,122 +246,126 @@ def apply_design() -> None:
             justify-content: center;
             align-items: center;
             text-align: center;
-            box-shadow: 0 8px 18px rgba(255, 48, 56, 0.2);
+            box-shadow: 0 8px 18px rgba(200, 16, 46, 0.3);
             margin-bottom: 0.7rem;
         }
 
         .red-action-small {
             font-size: 1.05rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: #ffffff;
         }
 
         .red-action-large {
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             font-weight: 800;
+            font-family: 'Montserrat', Arial, sans-serif;
             line-height: 1;
             margin-top: 0.35rem;
+            color: #ffffff;
         }
 
-        .section-label {
-            color: #0753a6;
-            font-size: 1.35rem;
-            font-weight: 700;
-            margin-top: 1.4rem;
-            margin-bottom: 0.55rem;
-        }
-
-        .blue-heading {
-            color: #0753a6;
-            font-size: 2.1rem;
-            font-weight: 700;
-            margin: 1rem 0;
-        }
+        /* ---------- KARTEN ---------- */
 
         .item-card {
-            background: white;
-            border: 1px solid #dfe6ef;
-            border-radius: 16px;
+            background: #ffffff;
+            border: 1px solid #d7e0ec;
+            border-top: 4px solid #0e3a75;
+            border-radius: 14px;
             padding: 0.8rem;
             min-height: 310px;
-            box-shadow: 0 5px 16px rgba(16, 44, 80, 0.08);
+            box-shadow: 0 5px 14px rgba(14, 58, 117, 0.1);
             margin-bottom: 1rem;
         }
 
         .item-card-title {
-            color: #102c50;
+            color: #0e3a75;
             font-weight: 800;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             margin: 0.45rem 0;
         }
 
         .item-card-text {
-            color: #53677c;
-            font-size: 0.9rem;
+            color: #3f5065;
+            font-size: 0.95rem;
             margin: 0.25rem 0;
         }
 
         .status-badge {
             display: inline-block;
-            border-radius: 14px;
-            padding: 0.25rem 0.65rem;
-            font-size: 0.75rem;
+            border-radius: 12px;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            background: #eaf2ff;
-            color: #0753a6;
+            background: #0e3a75;
+            color: #ffffff;
         }
 
+        /* ---------- KI-BOX ---------- */
+
         .ai-box {
-            background: #eef6ff;
-            border: 1px solid #b8d8ff;
-            border-radius: 16px;
+            background: #e8f1fd;
+            border: 1px solid #0e3a75;
+            border-radius: 14px;
             padding: 1rem;
             margin: 1rem 0;
         }
 
         .ai-title {
-            color: #0753a6;
+            color: #0e3a75;
             font-weight: 800;
+            font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1.1rem;
             margin-bottom: 0.65rem;
         }
 
+        /* ---------- INFO-BOX ---------- */
+
         .info-box {
             background: #fff8df;
-            border-left: 5px solid #f4d06f;
+            border-left: 6px solid #f2b705;
             padding: 0.9rem 1rem;
             border-radius: 8px;
-            color: #4d421d;
+            color: #5a4a12;
+            font-weight: 500;
             margin: 1rem 0;
         }
 
-        .footer {
-            text-align: center;
-            color: #718399;
-            font-size: 0.8rem;
-            margin-top: 3rem;
-            padding: 1rem;
-        }
+        /* ---------- BUTTONS ---------- */
 
         div.stButton > button {
-            border-radius: 22px;
+            border-radius: 14px;
             font-weight: 700;
-            min-height: 2.7rem;
+            font-family: 'Inter', Arial, sans-serif;
+            min-height: 3rem;
         }
 
-        div.stButton > button[kind="primary"] {
-            background: #ff3038;
-            color: #000000;
+        div.stButton > button[kind="primary"],
+        .stFormSubmitButton > button[kind="primaryFormSubmit"] {
+            background: #c8102e;
+            color: #ffffff;
             border: none;
         }
 
         div.stButton > button[kind="secondary"] {
-            border: 2px solid #0753a6;
-            color: #0753a6;
+            border: 2px solid #0e3a75;
+            color: #0e3a75;
         }
 
         .stTabs [data-baseweb="tab"] {
             font-weight: 700;
             font-size: 1rem;
+        }
+
+        /* ---------- FOOTER ---------- */
+
+        .footer {
+            text-align: center;
+            color: #44546a;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 3rem;
+            padding: 1rem;
         }
         </style>
         """,
@@ -764,12 +833,25 @@ def go_to(page: str) -> None:
     st.rerun()
 
 
-def render_logo() -> None:
+def render_header() -> None:
+    """
+    Zeigt den Schul-Kopfzeilenbereich mit Wappen auf jeder Seite.
+    Ohne Wappen-Datei wird ein sauberes K-Emblem angezeigt.
+    """
+    if LOGO_PATH.exists():
+        logo_data = base64.b64encode(LOGO_PATH.read_bytes()).decode()
+        logo_html = f'<img src="data:image/png;base64,{logo_data}" class="header-logo" alt="Wappen">'
+    else:
+        logo_html = '<div class="header-logo-fallback">K</div>'
+
     st.markdown(
-        """
-        <div class="top-brand">
-            <div class="top-brand-title">KATH-FINDER</div>
-            <div class="top-brand-subtitle">Digitales Fundbüro · Katharineum zu Lübeck</div>
+        f"""
+        <div class="main-header">
+            {logo_html}
+            <div>
+                <div class="header-title">KATH-FINDER</div>
+                <div class="header-subtitle">Katharineum zu Lübeck · Digitales Fundbüro</div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -813,7 +895,7 @@ def render_item_card(item: sqlite3.Row) -> None:
             """
             <div style="
                 height:150px;
-                background:#edf2f7;
+                background:#e6edf6;
                 border-radius:10px;
                 display:flex;
                 align-items:center;
@@ -849,8 +931,6 @@ def render_item_card(item: sqlite3.Row) -> None:
 # ============================================================
 
 def render_home() -> None:
-    render_logo()
-
     st.markdown(
         """
         <div class="hero-box">
@@ -954,6 +1034,8 @@ def render_found_form() -> None:
                     "Die KI ist momentan nicht verfügbar. "
                     "Die Kategorie kann trotzdem manuell ausgewählt werden."
                 )
+                with st.expander("Fehlerdetails anzeigen"):
+                    st.write(ai_error)
 
     suggested_category = None
 
@@ -1318,6 +1400,9 @@ def main() -> None:
             index=list(PAGE_ORDER.values()).index(current_page),
         )
         st.session_state["page"] = PAGE_ORDER[selected_label]
+
+    # Schul-Kopfzeile mit Wappen auf jeder Seite
+    render_header()
 
     page = st.session_state["page"]
 
