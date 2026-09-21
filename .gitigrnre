@@ -1,0 +1,25 @@
+# Datenbank und Uploads (private Daten!)
+data/
+uploads/
+
+# Python-Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtuelle Umgebungen
+.venv/
+venv/
+env/
+
+# Streamlit-Secrets (Passwörter)
+.streamlit/secrets.toml
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editoren
+.vscode/
+.idea/
