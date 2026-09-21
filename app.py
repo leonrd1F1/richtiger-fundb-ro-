@@ -54,6 +54,13 @@ LOCATIONS = [
     "Zuhause – morgen abgeben",
 ]
 
+HANDOVER_ICONS = {
+    "Fundgrube": "📦",
+    "Hausmeister": "🔑",
+    "Sekretariat": "🏫",
+    "Zuhause – morgen abgeben": "🏠",
+}
+
 STATUSES = [
     "Neu",
     "Gefunden",
@@ -103,6 +110,7 @@ def apply_design() -> None:
 
         .stApp {
             background: #f4f7fb;
+            font-size: 1.05rem;
         }
 
         /* ---------- SEITENLEISTE ---------- */
@@ -117,9 +125,9 @@ def apply_design() -> None:
         }
 
         [data-testid="stSidebar"] .stRadio label {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            padding: 0.2rem 0;
+            padding: 0.25rem 0;
         }
 
         /* ---------- KOPFBEREICH MIT WAPPEN ---------- */
@@ -189,7 +197,7 @@ def apply_design() -> None:
             font-size: 2.6rem;
             font-weight: 800;
             line-height: 1.1;
-            margin: 1rem 0 1.4rem 0;
+            margin: 0.5rem 0 1.4rem 0;
         }
 
         .blue-heading {
@@ -202,11 +210,11 @@ def apply_design() -> None:
 
         .section-label {
             color: #0e3a75;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 800;
             font-family: 'Montserrat', Arial, sans-serif;
             margin-top: 1.4rem;
-            margin-bottom: 0.55rem;
+            margin-bottom: 0.6rem;
         }
 
         /* ---------- STARTSEITE ---------- */
@@ -230,11 +238,10 @@ def apply_design() -> None:
 
         .hero-box p {
             color: #3f5065;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             margin: 0;
         }
 
-        /* Rote Aktionskästen: weiße Schrift auf kräftigem Rot */
         .red-action {
             background: #c8102e;
             color: #ffffff;
@@ -251,7 +258,7 @@ def apply_design() -> None:
         }
 
         .red-action-small {
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #ffffff;
         }
@@ -265,7 +272,92 @@ def apply_design() -> None:
             color: #ffffff;
         }
 
-        /* ---------- KARTEN ---------- */
+        /* ---------- FORMULARE ALS KARTEN ---------- */
+
+        [data-testid="stForm"] {
+            background: #ffffff;
+            border: 1px solid #d7e0ec;
+            border-top: 5px solid #0e3a75;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 14px rgba(14, 58, 117, 0.08);
+        }
+
+        /* ---------- ABGEGEBEN-BEI: GROSSE KLICKBARE KARTEN ---------- */
+
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"],
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] > div {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.7rem;
+        }
+
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] label {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 3px solid #c9d6e8;
+            border-radius: 14px;
+            padding: 1rem 1.1rem;
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0e3a75;
+            cursor: pointer;
+            min-height: 74px;
+            transition: border-color 0.15s ease, background 0.15s ease,
+                        box-shadow 0.15s ease;
+        }
+
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] label:hover {
+            border-color: #0e3a75;
+            background: #eef5fd;
+        }
+
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] label[aria-checked="true"],
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) {
+            border-color: #c8102e;
+            background: #fff0f3;
+            box-shadow: 0 5px 14px rgba(200, 16, 46, 0.2);
+        }
+
+        [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] label p {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0e3a75;
+        }
+
+        @media (max-width: 640px) {
+            [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"],
+            [data-testid="stForm"] [data-testid="stRadio"] [role="radiogroup"] > div {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---------- EINGABEFELDER: GRÖSSER & LESBARER ---------- */
+
+        .stTextInput input,
+        .stTextArea textarea {
+            font-size: 1.08rem;
+            color: #1e3448;
+        }
+
+        [data-baseweb="select"] > div {
+            font-size: 1.08rem;
+            color: #1e3448;
+        }
+
+        .stTextInput > label,
+        .stTextArea > label,
+        .stSelectbox > label,
+        .stDateInput > label,
+        .stFileUploader > label {
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: #1e3448;
+        }
+
+        /* ---------- KARTEN (FUNDSTÜCKE) ---------- */
 
         .item-card {
             background: #ffffff;
@@ -287,7 +379,7 @@ def apply_design() -> None:
 
         .item-card-text {
             color: #3f5065;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             margin: 0.25rem 0;
         }
 
@@ -295,7 +387,7 @@ def apply_design() -> None:
             display: inline-block;
             border-radius: 12px;
             padding: 0.3rem 0.7rem;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 700;
             background: #0e3a75;
             color: #ffffff;
@@ -324,10 +416,11 @@ def apply_design() -> None:
         .info-box {
             background: #fff8df;
             border-left: 6px solid #f2b705;
-            padding: 0.9rem 1rem;
+            padding: 1rem 1.1rem;
             border-radius: 8px;
             color: #5a4a12;
             font-weight: 500;
+            font-size: 1.02rem;
             margin: 1rem 0;
         }
 
@@ -336,6 +429,7 @@ def apply_design() -> None:
         div.stButton > button {
             border-radius: 14px;
             font-weight: 700;
+            font-size: 1.05rem;
             font-family: 'Inter', Arial, sans-serif;
             min-height: 3rem;
         }
@@ -350,11 +444,7 @@ def apply_design() -> None:
         div.stButton > button[kind="secondary"] {
             border: 2px solid #0e3a75;
             color: #0e3a75;
-        }
-
-        .stTabs [data-baseweb="tab"] {
-            font-weight: 700;
-            font-size: 1rem;
+            background: #ffffff;
         }
 
         /* ---------- FOOTER ---------- */
@@ -789,6 +879,21 @@ def html_escape(value: str) -> str:
     return html.escape(value)
 
 
+def get_handover_value(label: str | None) -> str | None:
+    """
+    Entfernt das Anzeige-Icon aus der Karten-Auswahl und gibt
+    den reinen Speicherwert zurück.
+    """
+    if label is None:
+        return None
+
+    for location in LOCATIONS:
+        if label.endswith(location):
+            return location
+
+    return label
+
+
 def save_uploaded_image(uploaded_file) -> str | None:
     if uploaded_file is None:
         return None
@@ -1085,11 +1190,19 @@ def render_found_form() -> None:
             placeholder="Zum Beispiel: 10:30",
         )
 
-        st.markdown('<div class="section-label">Abgegeben bei *</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-label">Abgegeben bei * (Pflichtangabe)</div>',
+            unsafe_allow_html=True,
+        )
 
-        handover_location = st.radio(
-            "Bitte mindestens eine Möglichkeit auswählen",
-            LOCATIONS,
+        handover_options = [
+            f"{HANDOVER_ICONS.get(location, '📍')}  {location}"
+            for location in LOCATIONS
+        ]
+
+        handover_choice = st.radio(
+            "Bitte wähle aus, wo der Gegenstand abgegeben wurde:",
+            handover_options,
             index=None,
         )
 
@@ -1103,10 +1216,12 @@ def render_found_form() -> None:
         if not name.strip():
             st.error("Bitte gib einen Gegenstandsnamen ein.")
 
-        elif handover_location is None:
+        elif handover_choice is None:
             st.error("Bitte wähle aus, wo der Gegenstand abgegeben wurde.")
 
         else:
+            handover_location = get_handover_value(handover_choice)
+
             saved_image = save_uploaded_image(uploaded_file)
 
             if uploaded_file is not None and saved_image is None:
@@ -1401,7 +1516,6 @@ def main() -> None:
         )
         st.session_state["page"] = PAGE_ORDER[selected_label]
 
-    # Schul-Kopfzeile mit Wappen auf jeder Seite
     render_header()
 
     page = st.session_state["page"]
