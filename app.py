@@ -47,6 +47,18 @@ CATEGORIES = [
     "Sonstiges",
 ]
 
+CATEGORY_ICONS = {
+    "Kleidung": "👕",
+    "Taschen": "🎒",
+    "Schlüssel": "🔑",
+    "Elektronik": "📱",
+    "Schulmaterial": "📚",
+    "Trinkflaschen": "🧴",
+    "Sport": "⚽",
+    "Schmuck": "💍",
+    "Sonstiges": "📦",
+}
+
 LOCATIONS = [
     "Fundgrube",
     "Hausmeister",
@@ -59,6 +71,13 @@ HANDOVER_ICONS = {
     "Hausmeister": "🔑",
     "Sekretariat": "🏫",
     "Zuhause – morgen abgeben": "🏠",
+}
+
+STATUS_BADGE_COLORS = {
+    "Neu": "#0e3a75",
+    "Gefunden": "#1e7a3c",
+    "Abgeholt": "#b25000",
+    "Erledigt": "#5a6b7d",
 }
 
 STATUSES = [
@@ -217,37 +236,14 @@ def apply_design() -> None:
             margin-bottom: 0.6rem;
         }
 
-        /* ---------- STARTSEITE ---------- */
-
-        .hero-box {
-            background: #ffffff;
-            border: 1px solid #d7e0ec;
-            border-top: 6px solid #0e3a75;
-            border-radius: 16px;
-            padding: 1.6rem 2rem;
-            box-shadow: 0 6px 16px rgba(14, 58, 117, 0.08);
-            margin-bottom: 2rem;
-        }
-
-        .hero-box h2 {
-            color: #0e3a75;
-            font-family: 'Montserrat', Arial, sans-serif;
-            font-size: 1.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .hero-box p {
-            color: #3f5065;
-            font-size: 1.1rem;
-            margin: 0;
-        }
+        /* ---------- ROTE AKTIONSKÄSTEN ---------- */
 
         .red-action {
             background: #c8102e;
             color: #ffffff;
             border-radius: 16px;
             padding: 1.5rem 1rem;
-            min-height: 145px;
+            min-height: 160px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -255,6 +251,12 @@ def apply_design() -> None:
             text-align: center;
             box-shadow: 0 8px 18px rgba(200, 16, 46, 0.3);
             margin-bottom: 0.7rem;
+        }
+
+        .red-action-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+            margin-bottom: 0.4rem;
         }
 
         .red-action-small {
@@ -334,7 +336,7 @@ def apply_design() -> None:
             }
         }
 
-        /* ---------- EINGABEFELDER: GRÖSSER & LESBARER ---------- */
+        /* ---------- EINGABEFELDER ---------- */
 
         .stTextInput input,
         .stTextArea textarea {
@@ -357,7 +359,7 @@ def apply_design() -> None:
             color: #1e3448;
         }
 
-        /* ---------- KARTEN (FUNDSTÜCKE) ---------- */
+        /* ---------- FUNDSTÜCK-KARTEN ---------- */
 
         .item-card {
             background: #ffffff;
@@ -368,6 +370,25 @@ def apply_design() -> None:
             min-height: 310px;
             box-shadow: 0 5px 14px rgba(14, 58, 117, 0.1);
             margin-bottom: 1rem;
+        }
+
+        .item-card-icon {
+            height: 150px;
+            background: #e8f0fa;
+            border: 2px dashed #9db8d8;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+        }
+
+        .item-card-icon small {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #3f5065;
+            margin-top: 0.4rem;
         }
 
         .item-card-title {
@@ -393,13 +414,13 @@ def apply_design() -> None:
             color: #ffffff;
         }
 
-        /* ---------- KI-BOX ---------- */
+        /* ---------- KI-BOX (gut lesbar, hell & dunkel) ---------- */
 
         .ai-box {
-            background: #e8f1fd;
-            border: 1px solid #0e3a75;
+            background: #ffffff;
+            border: 2px solid #0e3a75;
             border-radius: 14px;
-            padding: 1rem;
+            padding: 1.1rem 1.2rem;
             margin: 1rem 0;
         }
 
@@ -408,7 +429,47 @@ def apply_design() -> None:
             font-weight: 800;
             font-family: 'Montserrat', Arial, sans-serif;
             font-size: 1.1rem;
-            margin-bottom: 0.65rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ai-row {
+            margin-bottom: 0.8rem;
+        }
+
+        .ai-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-row-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.25rem;
+        }
+
+        .ai-label-text {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1e3448;
+        }
+
+        .ai-percent {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0e3a75;
+        }
+
+        .ai-bar-track {
+            width: 100%;
+            height: 12px;
+            background: #e2e9f2;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .ai-bar-fill {
+            height: 100%;
+            border-radius: 6px;
         }
 
         /* ---------- INFO-BOX ---------- */
@@ -690,7 +751,12 @@ def load_keras_model():
         return None, "Die Datei model/keras_model.h5 wurde noch nicht gefunden."
 
     try:
-        from tensorflow import keras
+        # tf_keras ermöglicht das Laden alter Keras-2-Modelle
+        # (z. B. aus Teachable Machine) auch mit neuem TensorFlow.
+        try:
+            import tf_keras as keras
+        except ImportError:
+            from tensorflow import keras
 
         model = keras.models.load_model(
             MODEL_PATH,
@@ -846,7 +912,7 @@ def map_ai_category(label: str) -> str | None:
     text = label.lower()
 
     mappings = {
-        "kleidung": ["kleidung", "jacke", "pullover", "shirt", "hose", "mütze", "cap"],
+        "kleidung": ["kleidung", "jacke", "pullover", "shirt", "hose", "mütze", "cap", "hoodie"],
         "taschen": ["tasche", "rucksack", "schulranzen", "beutel"],
         "schlüssel": ["schlüssel", "schlussel", "key"],
         "elektronik": ["elektronik", "handy", "smartphone", "tablet", "kopfhörer", "kabel"],
@@ -879,19 +945,18 @@ def html_escape(value: str) -> str:
     return html.escape(value)
 
 
-def get_handover_value(label: str | None) -> str | None:
-    """
-    Entfernt das Anzeige-Icon aus der Karten-Auswahl und gibt
-    den reinen Speicherwert zurück.
-    """
-    if label is None:
-        return None
+def format_category(category: str) -> str:
+    """Zeigt Kategorien mit Icon an, speichert aber den reinen Namen."""
+    icon = CATEGORY_ICONS.get(category)
+    if icon:
+        return f"{icon}  {category}"
+    return category
 
-    for location in LOCATIONS:
-        if label.endswith(location):
-            return location
 
-    return label
+def format_handover(location: str) -> str:
+    """Zeigt Abgabeorte mit Icon an, speichert aber den reinen Namen."""
+    icon = HANDOVER_ICONS.get(location, "📍")
+    return f"{icon}  {location}"
 
 
 def save_uploaded_image(uploaded_file) -> str | None:
@@ -968,10 +1033,14 @@ def render_red_action_button(
     large_text: str,
     page: str,
     key: str,
+    icon: str = "",
 ) -> None:
+    icon_html = f'<div class="red-action-icon">{icon}</div>' if icon else ""
+
     st.markdown(
         f"""
         <div class="red-action">
+            {icon_html}
             <div class="red-action-small">{small_text}</div>
             <div class="red-action-large">{large_text}</div>
         </div>
@@ -996,17 +1065,14 @@ def render_item_card(item: sqlite3.Row) -> None:
     if image_path and Path(image_path).exists():
         st.image(image_path, use_container_width=True)
     else:
+        category_icon = CATEGORY_ICONS.get(item["category"], "📦")
+        category_name = escape(item["category"])
         st.markdown(
-            """
-            <div style="
-                height:150px;
-                background:#e6edf6;
-                border-radius:10px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                font-size:3rem;
-            ">🎒</div>
+            f"""
+            <div class="item-card-icon">
+                <div>{category_icon}</div>
+                <small>{category_name}</small>
+            </div>
             """,
             unsafe_allow_html=True,
         )
@@ -1016,6 +1082,7 @@ def render_item_card(item: sqlite3.Row) -> None:
     item_location = escape(item["location"])
     item_date = escape(item["item_date"])
     item_status = escape(item["status"])
+    badge_color = STATUS_BADGE_COLORS.get(item["status"], "#0e3a75")
 
     st.markdown(
         f"""
@@ -1023,7 +1090,7 @@ def render_item_card(item: sqlite3.Row) -> None:
         <div class="item-card-text">Kategorie: {item_category}</div>
         <div class="item-card-text">Ort: {item_location}</div>
         <div class="item-card-text">Datum: {item_date}</div>
-        <span class="status-badge">{item_status}</span>
+        <span class="status-badge" style="background: {badge_color};">{item_status}</span>
         """,
         unsafe_allow_html=True,
     )
@@ -1036,19 +1103,6 @@ def render_item_card(item: sqlite3.Row) -> None:
 # ============================================================
 
 def render_home() -> None:
-    st.markdown(
-        """
-        <div class="hero-box">
-            <h2>Willkommen im digitalen Fundbüro</h2>
-            <p>
-                Hier kannst du verlorene Gegenstände melden, gefundene Gegenstände
-                eintragen und aktuelle Fundstücke durchsuchen.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
     left, right = st.columns(2, gap="large")
 
     with left:
@@ -1057,6 +1111,7 @@ def render_home() -> None:
             "VERLOREN",
             "verloren",
             "home_lost",
+            icon="🔍",
         )
 
     with right:
@@ -1065,6 +1120,7 @@ def render_home() -> None:
             "GEFUNDEN",
             "gefunden",
             "home_found",
+            icon="🎒",
         )
 
     st.markdown('<div class="blue-heading">Aktuelle Fundstücke</div>', unsafe_allow_html=True)
@@ -1124,15 +1180,34 @@ def render_found_form() -> None:
                 predictions, ai_error = classify_uploaded_image(uploaded_file)
 
             if predictions:
-                st.markdown(
-                    '<div class="ai-box"><div class="ai-title">KI-Erkennung</div>',
-                    unsafe_allow_html=True,
-                )
+                rows_html = ""
 
                 for label, probability in predictions:
-                    st.write(f"**{label}** – {probability * 100:.1f} %")
+                    safe_label = escape(label)
+                    percent = probability * 100
+                    bar_color = "#0e3a75" if percent >= 60 else "#5a7ca8"
 
-                st.markdown("</div>", unsafe_allow_html=True)
+                    rows_html += f"""
+                    <div class="ai-row">
+                        <div class="ai-row-label">
+                            <span class="ai-label-text">{safe_label}</span>
+                            <span class="ai-percent">{percent:.1f} %</span>
+                        </div>
+                        <div class="ai-bar-track">
+                            <div class="ai-bar-fill" style="width: {max(2.0, min(100.0, percent)):.1f}%; background: {bar_color};"></div>
+                        </div>
+                    </div>
+                    """
+
+                st.markdown(
+                    f"""
+                    <div class="ai-box">
+                        <div class="ai-title">KI-Erkennung</div>
+                        {rows_html}
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
             elif ai_error:
                 st.warning(
@@ -1169,6 +1244,7 @@ def render_found_form() -> None:
             "Kategorie *",
             CATEGORIES,
             index=default_index,
+            format_func=format_category,
         )
 
         column_a, column_b = st.columns(2)
@@ -1195,15 +1271,11 @@ def render_found_form() -> None:
             unsafe_allow_html=True,
         )
 
-        handover_options = [
-            f"{HANDOVER_ICONS.get(location, '📍')}  {location}"
-            for location in LOCATIONS
-        ]
-
-        handover_choice = st.radio(
+        handover_location = st.radio(
             "Bitte wähle aus, wo der Gegenstand abgegeben wurde:",
-            handover_options,
+            LOCATIONS,
             index=None,
+            format_func=format_handover,
         )
 
         submitted = st.form_submit_button(
@@ -1216,12 +1288,10 @@ def render_found_form() -> None:
         if not name.strip():
             st.error("Bitte gib einen Gegenstandsnamen ein.")
 
-        elif handover_choice is None:
+        elif handover_location is None:
             st.error("Bitte wähle aus, wo der Gegenstand abgegeben wurde.")
 
         else:
-            handover_location = get_handover_value(handover_choice)
-
             saved_image = save_uploaded_image(uploaded_file)
 
             if uploaded_file is not None and saved_image is None:
@@ -1269,7 +1339,7 @@ def render_lost_form() -> None:
     with st.form("lost_form"):
         name = st.text_input(
             "Gegenstandsname *",
-            placeholder="Zum Beispiel: blaue Trinkflasche",
+            placeholder="Zum Beispiel: schwarze Jacke",
         )
 
         description = st.text_area(
@@ -1280,6 +1350,7 @@ def render_lost_form() -> None:
         category = st.selectbox(
             "Kategorie *",
             CATEGORIES,
+            format_func=format_category,
         )
 
         column_a, column_b = st.columns(2)
@@ -1350,6 +1421,7 @@ def render_search_page() -> None:
         category = st.selectbox(
             "Kategorie",
             ["Alle Kategorien"] + CATEGORIES,
+            format_func=format_category,
         )
 
     with col3:
@@ -1438,7 +1510,12 @@ def render_admin_page() -> None:
                     if item["category"] in CATEGORIES
                     else 0
                 )
-                category = st.selectbox("Kategorie", CATEGORIES, index=category_index)
+                category = st.selectbox(
+                    "Kategorie",
+                    CATEGORIES,
+                    index=category_index,
+                    format_func=format_category,
+                )
 
                 location = st.text_input("Ort", value=item["location"] or "")
 
@@ -1460,7 +1537,12 @@ def render_admin_page() -> None:
                     if item["handover_location"] in LOCATIONS
                     else 0
                 )
-                handover_location = st.selectbox("Abgegeben bei", LOCATIONS, index=handover_index)
+                handover_location = st.selectbox(
+                    "Abgegeben bei",
+                    LOCATIONS,
+                    index=handover_index,
+                    format_func=format_handover,
+                )
 
                 status_index = (
                     STATUSES.index(item["status"])
